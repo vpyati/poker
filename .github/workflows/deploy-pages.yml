@@ -26,11 +26,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Pages
+      - name: Setup Pages (existing site)
+        if: ${{ github.event.repository.has_pages }}
         uses: actions/configure-pages@v5
         with:
-          enablement: "true"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
+
+      - name: Setup Pages (auto-create)
+        if: ${{ !github.event.repository.has_pages && secrets.PAGES_ADMIN_TOKEN != '' }}
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+          token: ${{ secrets.PAGES_ADMIN_TOKEN }}
+
+      - name: Fail without Pages access
+        if: ${{ !github.event.repository.has_pages && secrets.PAGES_ADMIN_TOKEN == '' }}
+        run: |
+          echo "::error::GitHub Pages is not enabled for this repository."
+          echo "::error::Enable Pages in repository settings or provide a PAGES_ADMIN_TOKEN secret with permission to create the Pages site."
+          exit 1
 
       - name: Prepare site
         run: |
