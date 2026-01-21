@@ -169,7 +169,7 @@ const endHand = (result) => {
   renderReport();
 };
 
-const revealRound = () => {
+const revealRound = ({ enableActions = true, setPrompt = true } = {}) => {
   const round = rounds[state.roundIndex];
   const newCards = dealCards(round.community);
   state.communityCards.push(...newCards);
@@ -183,11 +183,26 @@ const revealRound = () => {
   state.recommendations.push(recommendation);
 
   updateTimeline(round.name, `Pot odds ${Math.round(potOdds * 100)}% — Coach suggests ${recommendation.action}.`);
-  actionPrompt.textContent = `Coach suggests: ${recommendation.action}. Choose your action.`;
+  if (setPrompt) {
+    actionPrompt.textContent = `Coach suggests: ${recommendation.action}. Choose your action.`;
+  }
 
-  actionFold.disabled = false;
-  actionCall.disabled = false;
-  actionRaise.disabled = false;
+  actionFold.disabled = !enableActions;
+  actionCall.disabled = !enableActions;
+  actionRaise.disabled = !enableActions;
+};
+
+const resolveFold = () => {
+  actionPrompt.textContent = "You folded. The table plays on to a showdown.";
+  nextRoundButton.disabled = true;
+
+  while (state.roundIndex < rounds.length - 1) {
+    state.roundIndex += 1;
+    revealRound({ enableActions: false, setPrompt: false });
+  }
+
+  updateTimeline("Showdown", "You folded — another player won the pot.");
+  endHand("Loss");
 };
 
 const startHand = () => {
@@ -234,11 +249,17 @@ const chooseAction = (action) => {
   });
 
   updateTimeline("You", `${action} — ${isGood ? "Aligned with coach" : "Deviated from coach"}.`);
-  actionPrompt.textContent = "Action recorded. Advance to the next round.";
 
   actionFold.disabled = true;
   actionCall.disabled = true;
   actionRaise.disabled = true;
+
+  if (action === "Fold") {
+    resolveFold();
+    return;
+  }
+
+  actionPrompt.textContent = "Action recorded. Advance to the next round.";
   nextRoundButton.disabled = false;
 };
 
