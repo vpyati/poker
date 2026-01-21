@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poker Table Coach</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Six-handed • Texas Hold'em simulator</p>
+        <h1>Poker Table Coach</h1>
+        <p class="subtitle">Play a hand against five AI opponents and get a decision-by-decision report after every game.</p>
+      </div>
+      <div class="stats">
+        <div>
+          <span class="label">Hands Played</span>
+          <span id="handsPlayed" class="value">0</span>
+        </div>
+        <div>
+          <span class="label">Win Rate</span>
+          <span id="winRate" class="value">0%</span>
+        </div>
+        <div>
+          <span class="label">Last Result</span>
+          <span id="lastResult" class="value">—</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="table-card">
+        <div class="table">
+          <div class="community">
+            <h2>Community Cards</h2>
+            <div id="communityCards" class="cards"></div>
+            <p class="round" id="roundLabel">Pre-flop</p>
+          </div>
+          <div class="seats">
+            <div class="seat" data-seat="1">
+              <span class="player-name">Avery</span>
+              <span class="player-status" id="seatStatus1">Waiting</span>
+            </div>
+            <div class="seat" data-seat="2">
+              <span class="player-name">Jordan</span>
+              <span class="player-status" id="seatStatus2">Waiting</span>
+            </div>
+            <div class="seat" data-seat="3">
+              <span class="player-name">Blake</span>
+              <span class="player-status" id="seatStatus3">Waiting</span>
+            </div>
+            <div class="seat" data-seat="4">
+              <span class="player-name">Harper</span>
+              <span class="player-status" id="seatStatus4">Waiting</span>
+            </div>
+            <div class="seat" data-seat="5">
+              <span class="player-name">Quinn</span>
+              <span class="player-status" id="seatStatus5">Waiting</span>
+            </div>
+          </div>
+        </div>
+        <div class="player-panel">
+          <div>
+            <h2>You</h2>
+            <div id="playerCards" class="cards"></div>
+            <div class="meta">
+              <span id="stackLabel">Stack: $1,000</span>
+              <span id="potLabel">Pot: $0</span>
+            </div>
+          </div>
+          <div class="action-panel">
+            <h3>Choose your action</h3>
+            <p id="actionPrompt">Click “Start Hand” to be dealt in.</p>
+            <div class="actions">
+              <button class="primary" id="startHand">Start Hand</button>
+              <button class="ghost" id="actionFold" disabled>Fold</button>
+              <button class="ghost" id="actionCall" disabled>Call</button>
+              <button class="ghost" id="actionRaise" disabled>Raise</button>
+              <button class="primary" id="nextRound" disabled>Next Round</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <section class="panel">
+          <h3>Hand Timeline</h3>
+          <div id="timeline" class="timeline"></div>
+        </section>
+        <section class="panel">
+          <h3>Coaching Report</h3>
+          <div id="report" class="report empty">Finish a hand to receive feedback on each decision.</div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
