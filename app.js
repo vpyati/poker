@@ -64,12 +64,19 @@ const buildDeck = () => {
 
 const dealCards = (count) => state.deck.splice(0, count);
 
+const getCardLabel = (card) => {
+  if (!card) return "?";
+  if (card.code) return card.code;
+  const label = `${card.rank ?? ""}${card.suit ?? ""}`.trim();
+  return label || "?";
+};
+
 const renderCards = (container, cards, emptyCount = 0) => {
   container.innerHTML = "";
   cards.forEach((card) => {
     const cardEl = document.createElement("div");
     cardEl.className = "card";
-    cardEl.textContent = card.code;
+    cardEl.textContent = getCardLabel(card);
     container.appendChild(cardEl);
   });
   for (let i = 0; i < emptyCount; i += 1) {
@@ -157,7 +164,7 @@ const renderShowdownHands = (shouldShow) => {
     const cardsWrap = document.createElement("div");
     cardsWrap.className = "cards";
     row.appendChild(cardsWrap);
-    renderCards(cardsWrap, cards);
+    renderCards(cardsWrap, cards, Math.max(0, 2 - cards.length));
 
     showdownGrid.appendChild(row);
   });
