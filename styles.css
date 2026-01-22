@@ -202,6 +202,43 @@ body {
   margin-bottom: 16px;
 }
 
+.showdown {
+  background: var(--surface);
+  padding: 16px;
+  border-radius: 16px;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.showdown.is-visible {
+  display: flex;
+}
+
+.showdown-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.showdown-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.showdown-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.showdown-name {
+  font-weight: 600;
+  min-width: 80px;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

@@ -6,6 +6,7 @@ const state = {
   roundIndex: 0,
   deck: [],
   playerCards: [],
+  opponentCards: [],
   communityCards: [],
   history: [],
   recommendations: [],
@@ -43,6 +44,9 @@ const seatStatus = Array.from({ length: 5 }, (_, index) =>
 
 const suits = ["♠", "♥", "♦", "♣"];
 const ranks = ["A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"];
+const opponentNames = ["Avery", "Jordan", "Blake", "Harper", "Quinn"];
+const showdownSection = document.getElementById("showdownSection");
+const showdownGrid = document.getElementById("showdownGrid");
 
 const buildDeck = () => {
   const deck = [];
@@ -127,6 +131,38 @@ const resetReport = () => {
   report.textContent = "Finish a hand to receive feedback on each decision.";
 };
 
+const renderShowdownHands = (shouldShow) => {
+  showdownSection.classList.toggle("is-visible", shouldShow);
+  showdownGrid.innerHTML = "";
+
+  if (!shouldShow) return;
+
+  const participants = [
+    { name: "You", cards: state.playerCards },
+    ...opponentNames.map((name, index) => ({
+      name,
+      cards: state.opponentCards[index] || [],
+    })),
+  ];
+
+  participants.forEach(({ name, cards }) => {
+    const row = document.createElement("div");
+    row.className = "showdown-row";
+
+    const label = document.createElement("span");
+    label.className = "showdown-name";
+    label.textContent = name;
+    row.appendChild(label);
+
+    const cardsWrap = document.createElement("div");
+    cardsWrap.className = "cards";
+    row.appendChild(cardsWrap);
+    renderCards(cardsWrap, cards);
+
+    showdownGrid.appendChild(row);
+  });
+};
+
 const renderReport = () => {
   report.className = "report";
   report.innerHTML = "";
@@ -201,6 +237,7 @@ const resolveFold = () => {
     revealRound({ enableActions: false, setPrompt: false });
   }
 
+  renderShowdownHands(true);
   updateTimeline("Showdown", "You folded — another player won the pot.");
   endHand("Loss");
 };
@@ -208,6 +245,7 @@ const resolveFold = () => {
 const startHand = () => {
   state.deck = buildDeck();
   state.playerCards = dealCards(2);
+  state.opponentCards = opponentNames.map(() => dealCards(2));
   state.communityCards = [];
   state.roundIndex = 0;
   state.history = [];
@@ -220,6 +258,7 @@ const startHand = () => {
   renderCards(communityCards, state.communityCards, 5);
   resetTimeline();
   resetReport();
+  renderShowdownHands(false);
   updateSeatStatuses();
 
   startHandButton.disabled = true;
@@ -268,6 +307,7 @@ const nextRound = () => {
   if (state.roundIndex >= rounds.length) {
     const strength = estimateStrength();
     const result = Math.random() < strength ? "Win" : "Loss";
+    renderShowdownHands(true);
     updateTimeline("Showdown", `You ${result === "Win" ? "won" : "lost"} the pot.`);
     endHand(result);
     return;
